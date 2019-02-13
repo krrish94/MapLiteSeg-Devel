@@ -66,7 +66,7 @@ python main.py -b 4 --epochs 50 --dataset-dir /path/to/prepared/data --trainFile
 Once you're all trained and set, you can use `inference.py` to generate the cool-looking qualitative results on top of this `README`. A sample `inference.py` call would look like
 
 ```
-python inference.py --mode inference -b  --epochs 1 --dataset-dir /path/to/prepared/data --trainFile cache/train.txt --valFile cache/val.txt --testFile cache/test.txt --print-step 1 --class-weights-file cache/class_weights_maplite.txt --name ENet --generate-images
+python inference.py --mode inference -b 4 --epochs 1 --dataset-dir /path/to/prepared/data --trainFile cache/train.txt --valFile cache/val.txt --testFile cache/test.txt --print-step 1 --class-weights-file cache/class_weights_maplite.txt --name ENet --generate-images
 ```
 
 This will create a directory named `ENetDepth_images` in the `save` directory.
