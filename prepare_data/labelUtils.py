@@ -97,6 +97,8 @@ if __name__ == '__main__':
 	parser.add_argument('-pkl', type=file_exists, dest='pickle_file', \
 		help='Path to MapLite annotated pkl file, to create train/test data from.')
 	parser.add_argument('-outDir', type=file_exists, dest='target_dir', help='Directory to store generated data.')
+	parser.add_argument('--compute-mean', action='store_true', dest='compute_mean', \
+		help='Compute channelwise mean and standard deviation.')
 	args = parser.parse_args()
 
 
@@ -114,10 +116,11 @@ if __name__ == '__main__':
 	# Number of scans
 	num_scans = len(all_scans.index)
 
-	# # Helper objects to compute running mean and stddev
-	# stats_z = RunningStats()
-	# stats_intensity = RunningStats()
-	# stats_ring = RunningStats()
+	# Helper objects to compute running mean and stddev
+	if args.compute_mean:
+		stats_z = RunningStats()
+		stats_intensity = RunningStats()
+		stats_ring = RunningStats()
 
 	for i in range(num_scans):
 		print(i)
@@ -133,10 +136,11 @@ if __name__ == '__main__':
 		# Compute features from pointcloud
 		feat = flatten_pc(pc, ['z','intensity','ring'])
 		
-		# # Update statistics
-		# stats_z.push(np.ndarray.flatten(feat[:,:,0]))
-		# stats_intensity.push(np.ndarray.flatten(feat[:,:,1]))
-		# stats_ring.push(np.ndarray.flatten(feat[:,:,2]))
+		# Update statistics
+		if args.compute_stats:
+			stats_z.push(np.ndarray.flatten(feat[:,:,0]))
+			stats_intensity.push(np.ndarray.flatten(feat[:,:,1]))
+			stats_ring.push(np.ndarray.flatten(feat[:,:,2]))
 
 		# Channel-wise normalization
 		for j in range(3):
@@ -155,6 +159,14 @@ if __name__ == '__main__':
 		imageio.imwrite(os.path.join(image_dir, str(i).zfill(4) + '.png'), feat)
 		imageio.imwrite(os.path.join(label_dir, str(i).zfill(4) + '.png'), label_img)
 
-	# print(stats_z.mean(), stats_z.stddev())
-	# print(stats_intensity.mean(), stats_intensity.stddev())
-	# print(stats_ring.mean(), stats_ring.stddev())
+	if args.compute_mean:
+		stats_file = open(os.path.join(args.target_dir, 'stats.txt'), 'w')
+		stats_file.write('z_mean: ',  str(stats_z.mean()), '\n')
+		stats_file.write('z_stddev: ',  str(stats_z.stddev()), '\n')
+		stats_file.write('intensity_mean: ',  str(stats_intensity.mean()), '\n')
+		stats_file.write('intensity_stddev: ',  str(stats_intensity.stddev()), '\n')
+		stats_file.write('ring_mean: ',  str(stats_ring.mean()), '\n')
+		stats_file.write('ring_stddev: ',  str(stats_ring.stddev()), '\n')
+		print(stats_z.mean(), stats_z.stddev())
+		print(stats_intensity.mean(), stats_intensity.stddev())
+		print(stats_ring.mean(), stats_ring.stddev())
