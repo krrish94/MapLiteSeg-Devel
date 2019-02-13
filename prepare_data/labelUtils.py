@@ -83,13 +83,11 @@ def nan_to_zero(arr):
 	arr[np.isnan(arr)] = 0
 	return arr
 
-
 # Define a custom argparse.Action subclass to validate filepaths
 def file_exists(filename):
-	if not os.path.exists(fileName):
-		raise RuntimeError(filename + ' does not exist.')
-	return value
-
+        if not os.path.exists(filename):
+                raise RuntimeError(filename + ' does not exist.')
+        return filename
 
 if __name__ == '__main__':
 
