@@ -13,6 +13,7 @@ import pandas as pd
 import _pickle as pkl
 import os
 import scipy.stats as stats
+from tqdm import trange
 
 
 # 		    		Mean 				Stddev
@@ -122,8 +123,8 @@ if __name__ == '__main__':
 		stats_intensity = RunningStats()
 		stats_ring = RunningStats()
 
-	for i in range(num_scans):
-		print(i)
+	for i in trange(num_scans):
+		# print(i)
 		scan = all_scans.iloc[i]['scan']
 		road = all_scans.iloc[i]['is_road_truth']
 		nan = all_scans.iloc[i]['nan']
@@ -137,7 +138,7 @@ if __name__ == '__main__':
 		feat = flatten_pc(pc, ['z','intensity','ring'])
 		
 		# Update statistics
-		if args.compute_stats:
+		if args.compute_mean:
 			stats_z.push(np.ndarray.flatten(feat[:,:,0]))
 			stats_intensity.push(np.ndarray.flatten(feat[:,:,1]))
 			stats_ring.push(np.ndarray.flatten(feat[:,:,2]))
@@ -145,7 +146,8 @@ if __name__ == '__main__':
 		# Channel-wise normalization
 		for j in range(3):
 			feat[:,:,j] = (feat[:,:,j] - CHANNEL_MEAN[j]) / CHANNEL_STD[j]
-			feat[:,:,j] = (255 * feat[:,:,j])
+			# feat[:,:,j] = (255 * feat[:,:,j])	# Old and awesome normalization :)
+			feat[:,:,j] = (127.5 * (feat[:,:,j]+1))
 		feat = feat.astype(np.uint8)
 
 		# Create label png
