@@ -136,6 +136,16 @@ def get_arguments():
 		dest='ignore_unlabeled',
 		action='store_false',
 		help="The unlabeled class is not ignored.")
+	parser.add_argument(
+		'--ignore-ring',
+		dest='ignore_ring',
+		action='store_true',
+		help='Ignore the ring channel in input.')
+	parser.add_argument(
+		'--random-mask',
+		dest='random_mask',
+		action='store_true',
+		help='Randomly mask a few labels')
 
 	# Settings
 	parser.add_argument(

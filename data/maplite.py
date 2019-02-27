@@ -22,7 +22,8 @@ class MapLite(data.Dataset):
 	"""
 
 	def __init__(self, root_dir, list_file, mode='train', transform=None, label_transform = None, \
-		loader=utils.maplite_loader, color_mean=[0.,0.,0.], color_std=[1.,1.,1.]):
+		loader=utils.maplite_loader, color_mean=[0.,0.,0.], color_std=[1.,1.,1.], \
+		ignore_ring=False, random_mask=False):
 		
 		self.root_dir = root_dir
 		self.list_file = list_file
@@ -33,6 +34,8 @@ class MapLite(data.Dataset):
 		self.length = 0
 		self.color_mean = color_mean
 		self.color_std = color_std
+		self.ignore_ring = ignore_ring
+		self.random_mask = random_mask
 
 		self.color_encoding = self.get_color_encoding()
 
@@ -68,7 +71,8 @@ class MapLite(data.Dataset):
 
 		"""
 
-		img, label = self.loader(self.data[index], self.labels[index], self.color_mean, self.color_std)
+		img, label = self.loader(self.data[index], self.labels[index], self.color_mean, self.color_std, \
+			self.ignore_ring, self.random_mask)
 		if self.mode.lower() == 'inference':
 			return img, label, self.data[index], self.labels[index]
 		else:

@@ -173,7 +173,8 @@ def load_dataset(dataset):
 
 	# Load the test set as tensors
 	test_set = dataset(args.dataset_dir, args.testFile, mode='inference', transform=image_transform, \
-		label_transform=label_transform, color_mean=color_mean, color_std=color_std)
+		label_transform=label_transform, color_mean=color_mean, color_std=color_std, \
+		ignore_ring=args.ignore_ring)
 	test_loader = data.DataLoader(test_set, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
 	# Get encoding between pixel valus in label images and RGB colors

@@ -55,7 +55,8 @@ def get_files(folder, name_filter=None, extension_filter=None):
 	return filtered_files
 
 
-def maplite_loader(data_path, label_path, color_mean=[0.,0.,0.], color_std=[1.,1.,1.]):
+def maplite_loader(data_path, label_path, color_mean=[0.,0.,0.], color_std=[1.,1.,1.], ignore_ring=False, \
+	random_mask=False):
 	"""Loads a sample and label image given their path as PIL images. (maplite classes)
 
 	Keyword arguments:
@@ -63,6 +64,8 @@ def maplite_loader(data_path, label_path, color_mean=[0.,0.,0.], color_std=[1.,1
 	- label_path (``string``): The filepath to the ground-truth image.
 	- color_mean (``list``): R, G, B channel-wise mean
 	- color_std (``list``): R, G, B channel-wise stddev
+	- ignore_ring (``bool``): Sets the ring dimension (the third channel) to zero
+	- random_mask (``bool``): Randomly masks a section of the image
 
 	Returns the image and the label as PIL images.
 
@@ -72,6 +75,8 @@ def maplite_loader(data_path, label_path, color_mean=[0.,0.,0.], color_std=[1.,1
 	data = np.array(imageio.imread(data_path))
 	# Reshape data from H x W x C to C x H x W
 	data = np.moveaxis(data, 2, 0)
+	if ignore_ring:
+		data[2,:,:] = 0
 	# Define normalizing transform
 	normalize = transforms.Normalize(mean=color_mean, std=color_std)
 	# Convert image to float and map range from [0, 255] to [0.0, 1.0]. Then normalize
@@ -79,6 +84,18 @@ def maplite_loader(data_path, label_path, color_mean=[0.,0.,0.], color_std=[1.,1
 
 	# Load label
 	label = np.array(imageio.imread(label_path)).astype(np.uint8)
+
+	# Randomly mask a patch
+	if random_mask:
+		# Left edge of the mask (col)
+		left_edge = np.random.randint(0,90)
+		# Top edge of the mask (row)
+		top_edge = np.random.randint(0,100)
+		# Mask width
+		width = np.random.randint(1,50)
+		# Mask height
+		height = np.random.randint(1,50)
+		label[top_edge:top_edge+height,left_edge:left_edge+width] = 0
 
 	return data, label
 

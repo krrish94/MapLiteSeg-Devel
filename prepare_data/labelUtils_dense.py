@@ -129,6 +129,7 @@ if __name__ == '__main__':
 		# print(i)
 		scan = all_scans.iloc[i]['scan']
 		road = all_scans.iloc[i]['is_road_truth']
+		road_img = all_scans.iloc[i]['is_road_img']
 		nan = all_scans.iloc[i]['nan']
 		pc = np.array(scan,dtype={'names':('x','y','z','intensity','ring'), \
 			'formats':('f8','f8','f8','<u4','b')})
@@ -153,11 +154,14 @@ if __name__ == '__main__':
 		feat = feat.astype(np.uint8)
 
 		# Create label png
-		label = flatten_pc(pc, ['road'])
-		label_img = np.zeros(label.shape, dtype=np.uint8)
-		label_img[np.where(label>0)] = 2
-		label_img[np.where(label==0)] = 1
-		label_img = label_img[:,:,0]
+		# label = flatten_pc(pc, ['road'])
+		# label_img = np.zeros(label.shape, dtype=np.uint8)
+		# label_img[np.where(label>0)] = 2
+		# label_img[np.where(label==0)] = 1
+		# label_img = label_img[:,:,0]
+		label_img = np.zeros(road_img.shape, dtype=np.uint8)
+		label_img[np.where(road_img>0)] = 2
+		label_img[np.where(road_img==0)] = 1
 
 		# Write images
 		imageio.imwrite(os.path.join(image_dir, str(i).zfill(4) + '.png'), feat)

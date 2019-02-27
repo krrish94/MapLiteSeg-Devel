@@ -50,17 +50,20 @@ def load_dataset(dataset):
 	# Get selected dataset
 	# Load the training set as tensors
 	train_set = dataset(args.dataset_dir, args.trainFile, mode='train', transform=image_transform, \
-		label_transform=label_transform, color_mean=color_mean, color_std=color_std)
+		label_transform=label_transform, color_mean=color_mean, color_std=color_std, \
+		ignore_ring=args.ignore_ring, random_mask=args.random_mask)
 	train_loader = data.DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=args.workers)
 
 	# Load the validation set as tensors
 	val_set = dataset(args.dataset_dir, args.valFile, mode='val', transform=image_transform, \
-		label_transform=label_transform, color_mean=color_mean, color_std=color_std)
+		label_transform=label_transform, color_mean=color_mean, color_std=color_std, \
+		ignore_ring=args.ignore_ring)
 	val_loader = data.DataLoader(val_set, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
 	# Load the test set as tensors
 	test_set = dataset(args.dataset_dir, args.testFile, mode='test', transform=image_transform, \
-		label_transform=label_transform, color_mean=color_mean, color_std=color_std)
+		label_transform=label_transform, color_mean=color_mean, color_std=color_std, \
+		ignore_ring=args.ignore_ring)
 	test_loader = data.DataLoader(test_set, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
 	# Get encoding between pixel valus in label images and RGB colors
